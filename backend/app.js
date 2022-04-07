@@ -4,10 +4,11 @@ const app = express();
 
 app.use(express.json());
 const mongoose = require('mongoose');
-
+// Il nous faudra une nouvelle importation dans app.js pour accéder au path de notre serveur :  qui donne accés au chemin du systeme de fichier 
+const path = require('path');
 
 // les routeurs
-const sauceRoutes = require('./routes/sauce')
+const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
 mongoose.connect('mongodb+srv://faouaz:mongoBD15@cluster0.947h4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
@@ -24,8 +25,9 @@ app.use((req, res, next) => {
   });
   
 
+  app.use('/images', express.static(path.join(__dirname, 'images'))); 
 
-  app.use('/api/sauce' ,sauceRoutes);
+  app.use('/api/sauces' ,sauceRoutes);
   app.use('/api/auth', userRoutes);
 
 

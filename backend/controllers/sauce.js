@@ -3,11 +3,13 @@ const modelSauce = require('../models/Sauce');
 
 // Enregistrement des Sauces dans la base de données
 exports.createSauce = (req, res, next) => {
-    delete req.body._id;
+    const sauceObject = JSON.parse(req.body.sauce);
+    delete sauceObject;
     const sauce = new modelSauce({
-        ...req.body
+        ...sauceObject,
+        // pour url de l'image
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
-    console.log('abdallah', sauce)
     sauce.save()
         .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
         .catch(error => res.status(400).json({ error }));
