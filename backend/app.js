@@ -24,8 +24,9 @@ app.use((req, res, next) => {
     next();
   });
   
-
+  // Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req
   app.use(express.json());
+  
   app.use('/images', express.static(path.join(__dirname, 'images'))); 
   app.use('/api/sauces' ,sauceRoutes);
   app.use('/api/auth', userRoutes);
