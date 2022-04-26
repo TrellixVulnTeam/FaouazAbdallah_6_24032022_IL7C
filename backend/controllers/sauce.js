@@ -6,12 +6,12 @@ const fs = require('fs');
 
 // Enregistrement des Sauces dans la base de données app.post
 exports.createSauce = (req, res, next) => {
-    const sauceObject = JSON.parse(req.body.sauce);
+    const sauceObject = JSON.parse(req.body.sauce);// le front-end doit envoyer les données de la requete sous  form-date () nous devons donc l'analyser à l'aide de JSON.parse pour obtenir  un objet utilisable.
     delete sauceObject._id;// le front-end envoi egalment un id qui ne sera pas le bon  qu'il faudra supprimer avant la construction de la sauce  
     const sauce = new modelSauce({
         ...sauceObject, //userId : req.body.userId  L'opérateur spread ... est utilisé pour faire une copie de tous les éléments de req.body
-        // pour url de l'image
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        // pour url de l'image Nous devons également résoudre l'URL complète de notre image
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` // req.file.filename pour accedez au nom du fichier ,http://localhost:3000/images/<image-name>.jpg
     });
     sauce.save()
         .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
@@ -20,14 +20,14 @@ exports.createSauce = (req, res, next) => {
 
 // Mettez à jour une sauce existant app put
 exports.modifySauce = (req, res, next) => {
-    const sauceObject = req.file ?
+    const sauceObject = req.file ? // on crée un objet sauceObject qui regarde si req.file(nouvelle image) existe ou non
     //si req.fille existe on traite la nouvelle image
     {
       ...JSON.parse(req.body.sauce),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
      }
-    // s'il n'existe pas, on traite simplement l'objet entrant
-     : { ...req.body };
+    // s'il n'existe pas, on traite simplement l'objet entrant 
+     : { ...req.body }; 
     
     modelSauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
         .then(() => res.status(200).json({ message: 'Objet modifié !' }))
@@ -36,10 +36,10 @@ exports.modifySauce = (req, res, next) => {
 
 // Suppression d'une sauce app.delete  
 exports.deleteSauce = (req, res, next) => {
-    modelSauce.findOne({ _id: req.params.id }) //req.params.id est l'id des parametres de routes 
-    .then(sauce => {
-      const filename = sauce.imageUrl.split('/images/')[1];
-      fs.unlink(`images/${filename}`, () => {
+    modelSauce.findOne({ _id: req.params.id }) //nous utilisons l'ID que nous recevons comme paramètre pour trouver la sauce correspondant dans la base de données 
+    .then(sauce => { // on extrait le nom du fichier qu'il faut supprimer
+      const filename = sauce.imageUrl.split('/images/')[1];// on veut recuperer le nom du fichier precisement donc 1 = nom du fichier,  nous utilisons le fait de savoir que notre URL d'image contient un segment /images/ pour séparer le nom de fichier ;
+      fs.unlink(`images/${filename}`, () => { //nous utilisons ensuite la fonction unlink du package fs pour supprimer ce fichier et comme 2 argument le   le callback  pour supprimer la sauce de la base de données
         modelSauce.deleteOne({ _id: req.params.id })
         .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
         .catch(error => res.status(400).json({ error }));
@@ -74,7 +74,7 @@ exports.likeDislike = (req,res,next) => {
   console.log(req.body);
 
   if (like === 1) { // Si il s'agit d'un like
-    Sauce.updateOne({
+    modelSauce.updateOne({
         _id: sauceId
       }, {
         // On push l'utilisateur et on incrémente le compteur de 1
@@ -93,7 +93,7 @@ exports.likeDislike = (req,res,next) => {
       }))
   }
   if (like === -1) {
-    Sauce.updateOne( // S'il s'agit d'un dislike
+    modelSauce.updateOne( // S'il s'agit d'un dislike
         {
           _id: sauceId
         }, {
@@ -115,12 +115,12 @@ exports.likeDislike = (req,res,next) => {
       }))
   }
   if (like === 0) { // Si il s'agit d'annuler un like ou un dislike
-    Sauce.findOne({
+    modelSauce.findOne({
         _id: sauceId
       })
       .then((sauce) => {
         if (sauce.usersLiked.includes(userId)) { // Si il s'agit d'annuler un like
-          Sauce.updateOne({
+          modelSauce.updateOne({
               _id: sauceId
             }, {
               $pull: {
@@ -138,7 +138,7 @@ exports.likeDislike = (req,res,next) => {
             }))
         }
         if (sauce.usersDisliked.includes(userId)) { // Si il s'agit d'annuler un dislike
-          Sauce.updateOne({
+          modelSauce.updateOne({
               _id: sauceId
             }, {
               $pull: {
