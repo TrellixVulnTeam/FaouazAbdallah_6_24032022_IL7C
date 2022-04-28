@@ -1,14 +1,16 @@
-const express = require('express');
-const mongoose = require('mongoose');
+const express = require('express');// Importation d'express => Framework basé sur node.js
+const mongoose = require('mongoose');// Plugin Mongoose pour se connecter à la data base Mongo Db
 const path = require('path');// Il nous faudra une nouvelle importation dans app.js pour accéder au path de notre serveur :  qui donne accés au chemin du systeme de fichier 
-const helmet = require('helmet');
+const helmet = require('helmet');// utilisation du module 'helmet' pour la sécurité en protégeant l'application de certaines vulnérabilités
 const cookieSession = require('cookie-session');
 const nocache = require('nocache');
 
 // les routeurs
-const sauceRoutes = require('./routes/sauce');
-const userRoutes = require('./routes/user');
+const sauceRoutes = require('./routes/sauce');// On importe la route dédiée aux sauces
+const userRoutes = require('./routes/user');// On importe la route dédiée aux utilisateurs
 
+// utilisation du module 'dotenv' pour masquer les informations de connexion à la base de données à l'aide de variables d'environnement
+require('dotenv').config();
 
 mongoose.connect('mongodb+srv://faouaz:mongoBD15@cluster0.947h4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
   { useNewUrlParser: true,

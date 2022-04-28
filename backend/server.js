@@ -1,4 +1,6 @@
-const http = require('http');//https
+// Import du package http - https requiert un certificat SSL à obtenir avec un nom de domaine
+const http = require('http');//https  // Connecte un utilisateur
+// Import de app pour utilisation de l'application sur le serveur
 const app = require('./app');
 
 // on dit sur quel port expresse doit tourner 

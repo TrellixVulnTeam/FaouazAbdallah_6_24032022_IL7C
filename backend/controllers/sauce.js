@@ -1,8 +1,9 @@
+// Récupération du modèle créé grâce à la fonction schéma de mongoose
 
+// Récupération du modèle 'sauce'
 const modelSauce = require('../models/Sauce');
-// Il nous donne accès aux fonctions qui nous permettent de modifier le système de fichiers, y compris aux fonctions permettant de supprimer les fichiers.
+// Récupération du module 'file system' de Node permettant de gérer ici les téléchargements et modifications d'images
 const fs = require('fs');
-
 
 // Enregistrement des Sauces dans la base de données app.post
 exports.createSauce = (req, res, next) => {
@@ -18,7 +19,7 @@ exports.createSauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error })); //error :error 
 };
 
-// Mettez à jour une sauce existant app put
+// Mettez à jour une sauce existante app put
 exports.modifySauce = (req, res, next) => {
     const sauceObject = req.file ? // on crée un objet sauceObject qui regarde si req.file(nouvelle image) existe ou non
     //si req.fille existe on traite la nouvelle image
@@ -63,6 +64,7 @@ exports.getAllSauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 };
 
+// Permet de "liker"ou "dislaker" une sauce
 exports.likeDislike = (req,res,next) => {
 // Pour la route READ = Ajout/suppression d'un like / dislike à une sauce
   // Like présent dans le body
@@ -164,61 +166,3 @@ exports.likeDislike = (req,res,next) => {
 }
 
 
-exports.testlikeDislike = (req,res,next) => {
-
-  switch (req.body.like) // je recupere le choix de lutilisateur -1, 1 ou 0
-  {
-    //  pour le choix 1 
-    case 1:
-      // je recupere la cle _id et sa valeur pour travailler dessu
-      saucesModel.updateOne({ _id: req.params.id }, {
-        $inc: { likes: 1 }, // j'incremente ma cle likes de 1 
-        $push: { usersLiked: req.body.userId },// je rajoute l'ID de mon utilisateur dans le tableau
-      })
-        .then(() => { res.status(201).json({ message: 'Ton avis a été pris en compte!' }); })
-        .catch((err) => { res.status(400).json({ err }); });
-      break;
-      case 0:
-        saucesModel.findOne({ _id: req.params.id }) // je recherche dans la Database la sauce avec l'ID recuperer dans les parametre de la requette ( dans URL)
-          .then((objet) => { // une foi trouver je recupere une promise avec tout l'objet 
-  
-  
-            // je parcour les ID qui sont dans usersLiked 
-            // si sa match avec le userId de l'actuel utilisateur j'execute le code
-            if (objet.usersLiked.find(user => user === req.body.userId)) {
-              saucesModel.updateOne({ _id: req.params.id }, {  // mise a jours de la sauce avec l'ID recuperer dans les parametre
-                $inc: { likes: -1 }, // j'enleve 1 au like 
-                $pull: { usersLiked: req.body.userId }, // et j'enleve mon Id de usersLiked
-              })
-                .then(() => { res.status(201).json({ message: 'Ton avis a été pris en compte!' }); })
-                .catch((err) => { res.status(400).json({ err }); });
-  
-            } if (objet.usersDisliked.find(user => user === req.body.userId)) {
-              saucesModel.updateOne({ _id: req.params.id }, {  // mise a jours de la sauce avec l'ID recuperer dans les parametre
-                $inc: { dislikes: -1 }, // j'enleve 1 au dislike 
-                $pull: { usersDisliked: req.body.userId }, // et j'enleve mon Id de usersdisliked
-              })
-                .then(() => { res.status(201).json({ message: 'Ton avis a été pris en compte!' }); })
-                .catch((err) => { res.status(400).json({ err }); });
-  
-            }
-          })
-          .catch((err) => { res.status(404).json({ err }); });
-        break;
-        case -1:
-      // je recupere la cle _id et sa valeur pour travailler dessu
-      saucesModel.updateOne({ _id: req.params.id }, {
-        $inc: { dislikes: 1 }, // j'incremente ma cle dislikes de 1 
-        $push: { usersDisliked: req.body.userId },// je rajoute l'ID de mon utilisateur dans le tableau dislikes
-      })
-        .then(() => { res.status(201).json({ message: 'Ton avis a été pris en compte!' }); })
-        .catch((err) => { res.status(400).json({ err }); });
-      break;
-    default:
-      console.log('j\'ai un probleme');
-    }
-  
-
-
-
-}
