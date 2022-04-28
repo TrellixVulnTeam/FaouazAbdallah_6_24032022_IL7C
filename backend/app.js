@@ -18,15 +18,23 @@ mongoose.connect('mongodb+srv://faouaz:mongoBD15@cluster0.947h4.mongodb.net/myFi
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-const app = express();
+  // Création d'une application express
+const app = express(); // L'application utilise le framework express
 
+// Middleware Header pour contourner les erreurs en débloquant certains systèmes de sécurité CORS, afin que tout le monde puisse faire des requetes depuis son navigateur
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    next();
-  });
+  // on indique que les ressources peuvent être partagées depuis n'importe quelle origine
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // on indique les entêtes qui seront utilisées après la pré-vérification cross-origin afin de donner l'autorisation
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+  // on indique les méthodes autorisées pour les requêtes HTTP
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  // on autorise ce serveur à fournir des scripts pour la page visitée
+  res.setHeader('Content-Security-Policy', "default-src 'self'");
+  next();
+});
 
+// Options pour sécuriser les cookies
 var expiryDate = new Date( Date.now() + 60 * 60 * 1000 ); // 1 hour
 app.use(cookieSession({
   name: 'session',
@@ -34,7 +42,7 @@ app.use(cookieSession({
   cookie: { secure: true,
             httpOnly: true,
             domain: 'http://localhost:3000',
-            path: 'foo/bar',
+             path: 'foo/bar',
             expires: expiryDate
           }
   })
@@ -49,8 +57,10 @@ app.use(cookieSession({
   app.use(nocache());
   // indique à Express qu'il faut gérer la ressource images de manière statique
   app.use('/images', express.static(path.join(__dirname, 'images'))); 
+  // Va servir les routes dédiées aux sauces
   app.use('/api/sauces' ,sauceRoutes);
+  // Va servir les routes dédiées aux utilisateurs
   app.use('/api/auth', userRoutes);
 
-
+// Export de l'application express pour déclaration dans server.js
 module.exports = app;
