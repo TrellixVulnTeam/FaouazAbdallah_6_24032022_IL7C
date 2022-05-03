@@ -52,7 +52,7 @@ app.use(cookieSession({
   // Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req
   app.use(express.json());
   // On utilise helmet contre les attaques cross-site scripting ou XSS 
-  app.use(helmet());
+  //app.use(helmet());
   //  on désactive la mise en cache du navigateur côté client.
   app.use(nocache());
   // indique à Express qu'il faut gérer la ressource images de manière statique
