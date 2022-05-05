@@ -4,12 +4,13 @@ const path = require('path');// Il nous faudra une nouvelle importation dans app
 const helmet = require('helmet');// utilisation du module 'helmet' pour la sécurité en protégeant l'application de certaines vulnérabilités
 const cookieSession = require('cookie-session');
 const nocache = require('nocache');
+const morgan = require('morgan');
 
 // les routeurs
 const sauceRoutes = require('./routes/sauce');// On importe la route dédiée aux sauces
 const userRoutes = require('./routes/user');// On importe la route dédiée aux utilisateurs
 
-// utilisation du module 'dotenv' pour masquer les informations de connexion à la base de données à l'aide de variables d'environnement
+// utilisation du module 'dotenv'(.env)pour masquer les informations de connexion à la base de données à l'aide de variables d'environnement
 require('dotenv').config();
 
 mongoose.connect('mongodb+srv://faouaz:mongoBD15@cluster0.947h4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
@@ -52,7 +53,9 @@ app.use(cookieSession({
   // Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req
   app.use(express.json());
   // On utilise helmet contre les attaques cross-site scripting ou XSS 
-  //app.use(helmet());
+   app.use(helmet());
+  // permet de voir les requettes Get ,Post sur le terminal 
+   app.use(morgan('tiny'));
   //  on désactive la mise en cache du navigateur côté client.
   app.use(nocache());
   // indique à Express qu'il faut gérer la ressource images de manière statique

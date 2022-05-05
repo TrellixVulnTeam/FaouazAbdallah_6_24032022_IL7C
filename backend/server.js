@@ -1,5 +1,6 @@
-// Import du package http - https requiert un certificat SSL à obtenir avec un nom de domaine
+// Import du package http 
 const http = require('http');//https  // Connecte un utilisateur
+// console.log(http);
 // Import de app pour utilisation de l'application sur le serveur
 const app = require('./app');
 
