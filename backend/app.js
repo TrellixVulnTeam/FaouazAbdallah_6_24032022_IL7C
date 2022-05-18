@@ -1,5 +1,6 @@
 const express = require('express');// Importation d'express => Framework basé sur node.js
 const mongoose = require('mongoose');// Plugin Mongoose pour se connecter à la data base Mongo Db
+var mongodbErrorHandler = require('mongoose-mongodb-errors');
 const path = require('path');// Il nous faudra une nouvelle importation dans app.js pour accéder au path de notre serveur :  qui donne accés au chemin du systeme de fichier 
 const helmet = require('helmet');// utilisation du module 'helmet' pour la sécurité en protégeant l'application de certaines vulnérabilités
 const cookieSession = require('cookie-session');
@@ -13,13 +14,14 @@ const userRoutes = require('./routes/user');// On importe la route dédiée aux 
 // utilisation du module 'dotenv'(.env)pour masquer les informations de connexion à la base de données à l'aide de variables d'environnement
 require('dotenv').config();
 
-mongoose.connect('mongodb+srv://faouaz:mongoBD15@cluster0.947h4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://faouaz:mongoBD15@cluster0.947h4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',//`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_passeword}@${process.env.DB_CLUSTER }.mongodb.net/${process.env.DB_NAME }?retryWrites=true&w=majority`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
-
-  // Création d'une application express
+  mongoose.plugin(mongodbErrorHandler);
+  
+// Création d'une application express
 const app = express(); // L'application utilise le framework express
 
 // Middleware Header pour contourner les erreurs en débloquant certains systèmes de sécurité CORS, afin que tout le monde puisse faire des requetes depuis son navigateur
@@ -36,7 +38,7 @@ app.use((req, res, next) => {
 });
 
 // Options pour sécuriser les cookies
-var expiryDate = new Date( Date.now() + 60 * 60 * 1000 ); // 1 hour
+const expiryDate = new Date( Date.now() + 60 * 60 * 1000 ); 
 app.use(cookieSession({
   name: 'session',
   keys: process.env.key_session,
@@ -53,7 +55,9 @@ app.use(cookieSession({
   // Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req
   app.use(express.json());
   // On utilise helmet contre les attaques cross-site scripting ou XSS 
-   app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: false
+}));
   // permet de voir les requettes Get ,Post sur le terminal 
    app.use(morgan('tiny'));
   //  on désactive la mise en cache du navigateur côté client.

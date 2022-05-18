@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
-// const MongooseErrors = require( ' mongoose-errors ' );
+
 
 const userSchema = mongoose.Schema({
   email: { type: String, required: true, unique: true },//unique:true pour ne pas que plusieurs User utilise la meme adresse mail pour l'inscription
@@ -10,8 +10,6 @@ const userSchema = mongoose.Schema({
 userSchema.plugin(uniqueValidator);
 
 // Ce plugin tire parti des middlewares de gestion des erreurs récemment introduits sur mongoose , il identifie avec succès le chemin (ou le champ) défaillant et la valeur correctement, et les ajoute dans le hachage des erreurs
-// userSchema.plugin(MongooseErrors) ;
-// Model = mongoose.model('userSchema', userSchema);
 
 
 
