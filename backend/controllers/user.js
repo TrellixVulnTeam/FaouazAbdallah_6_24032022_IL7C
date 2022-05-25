@@ -24,7 +24,7 @@ exports.signup = (req, res, next) => {
       user.save()// on utilise la methode save pour enregistré les données dans la base de donnée
         .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
         .catch(error =>{
-          res.statusMessage = error.message
+          res.statusMessage = "Cette adresse e-mail est déjà utilisée"  //error.message
           res.status(400).end()
         } );
     })
