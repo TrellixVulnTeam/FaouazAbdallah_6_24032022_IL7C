@@ -19,7 +19,7 @@ exports.createSauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error })); //error :error 
 };
 
-// Mettez à jour une sauce existante app put
+// Mettez à jour une sauce existante app put.
 exports.modifySauce = (req, res, next) => {
     const sauceObject = req.file ? // on crée un objet sauceObject qui regarde si req.file(nouvelle image) existe ou non
     //si req.fille existe on traite la nouvelle image
