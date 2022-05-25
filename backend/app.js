@@ -68,6 +68,6 @@ app.use(cookieSession({
   app.use('/api/sauces' ,sauceRoutes);
   // Va servir les routes dédiées aux utilisateurs
   app.use('/api/auth', userRoutes);
-
+  
 // Export de l'application express pour déclaration dans server.js
 module.exports = app;

@@ -11,16 +11,22 @@ const User = require('../models/User');
 
 //pour l'enregistrement de nouveau utilisateur
 exports.signup = (req, res, next) => {
+  // console.log(req.body.email) 
+  // console.log(req.body.password)
   bcrypt.hash(req.body.password, 10) //nous appelons la fonction de hachage de bcrypt dans notre mot de passe et lui demandons de « saler » le mot de passe 10 fois.donc on fera 10 tours de hashage  qui sera suffissant pour securiser le code 
   //on va recureper le mots de passe avec le hashage   il s'agit d'une fonction asynchrone qui renvoie une Promise dans laquelle nous recevons le hash généré ;
   .then(hash => {
       const user = new User({ // on va crée un nouveau  utilisateur 
         email: req.body.email,// on va  fournir ladresse passé  dans le corps de la requette 
-        password: hash // pour ne pas stoker le mots de passe en blanc  on va utilisé comme mots de passe le hash crypté qui est crée juste avant 
+        password: hash // pour ne pas stoker le mots de passe en blanc (req.body.password)  on va utilisé comme mots de passe le hash crypté qui est crée juste avant 
       });
+    // console.log(user)
       user.save()// on utilise la methode save pour enregistré les données dans la base de donnée
         .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-        .catch(error => res.status(401).json({ error }));
+        .catch(error =>{
+          res.statusMessage = error.message
+          res.status(400).end()
+        } );
     })
     .catch(error => res.status(500).json({ error }));
 };
