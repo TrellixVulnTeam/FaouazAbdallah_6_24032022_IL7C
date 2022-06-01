@@ -72,11 +72,11 @@ exports.likeDislike = (req, res, next) => {
             modelSauce
                 .findOne({ _id: req.params.id })
                 .then((sauce) => {
-                    //Vérifie déjà si l'utilisateur n'a ni liké et ni disliké : donc n'a encore rien fait
-                    //Si l'utilisateur n'est pas dans le tableau des likes et s'il n'est non plus dans le tableau des diskiles : donc n'a encore rien fait
+                    
+                    //Si l'utilisateur n'est pas dans le tableau des likes et s'il n'est non plus dans le tableau des diskiles 
                     let check = !sauce.usersLiked.includes(req.body.userId) && !sauce.usersDisliked.includes(req.body.userId);
                     if(check) {
-                        //l'utilisateur n'a encore rien fait : il n'a ni liké ni disliké
+                       
                         //donc on doit vérifier s'il veut liker ou pas
                         switch (like) {
                             case 1: //Il veut liker
@@ -106,7 +106,7 @@ exports.likeDislike = (req, res, next) => {
                                     res.status(400).json({ error });
                                 })
                                 break;
-                            default://ça ne nous interesse vraiment pas. Après si on veut on peut générer une exception pour ce cas parce que ça traduit le fait qu'un utilisateur veille annuler un like ou dislike qu'il n'a pourtant pas fait
+                            default:
                                 return res.status(400).json({
                                     message: "Comment voulez-vous annuler une action que vous n'avez pas faite !?"
                                 });
