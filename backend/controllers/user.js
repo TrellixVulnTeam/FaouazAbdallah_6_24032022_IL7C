@@ -46,10 +46,10 @@ exports.login = (req, res, next) => {
           }//et si la comparaison retourne true l'utilisateur entre des identifiant valable 
           res.status(200).json({
            //on lui envoi :
-            userId: user._id,
+            userId: user._id, // indentifiant de l'utilisateur dans la base 
             // nous utilisons la fonction sign ( 3 arguments) de jsonwebtoken pour encoder un nouveau token d'authentification   (token utilisateur = token server )
             token: jwt.sign( // sign prend les données que l'on veut encoder 
-                { userId: user._id }, // 1ere argument ce token contient l'ID de l'utilisateur en tant que payload (les données encodées dans le token) ,on encode le userId pour la creation de nouveaux objets qui pourront etre supprimer que par le meme utilisateur 
+                { userId: user._id }, // 1ere argument ce token contient l'ID de l'utilisateur (les données encodées dans le token) ,on encode le userId pour la creation de nouveaux objets qui pourront etre supprimer que par le meme utilisateur 
                 'RANDOM_TOKEN_SECRET', //le 2eme argument c'est la clée secret d'encodage 
                 { expiresIn: '24h' } //le 3eme argument est argument de configuration ,le token ne durera que 24h 
               ) 

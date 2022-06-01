@@ -54,13 +54,13 @@ app.use(cookieSession({
   
   // Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req
   app.use(express.json());
-  // On utilise helmet contre les attaques cross-site scripting ou XSS 
+  // On utilise helmet contre les attaques cross-site scripting ou XSS (les failles XSS permettent à un attaquant d’injecter du code JavaScript)
   app.use(helmet({
-    crossOriginResourcePolicy: false
+    crossOriginResourcePolicy: false //empêche Helmet de définir l' Cross-Origin-Embedder-Policy
 }));
   // permet de voir les requettes Get ,Post sur le terminal 
    app.use(morgan('tiny'));
-  //  on désactive la mise en cache du navigateur côté client.
+  //  on désactive la mise en cache du navigateur côté client .
   app.use(nocache());
   // indique à Express qu'il faut gérer la ressource images de manière statique
   app.use('/images', express.static(path.join(__dirname, 'images'))); 
